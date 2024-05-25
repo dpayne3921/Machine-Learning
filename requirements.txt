@@ -1,0 +1,35 @@
+# packages for Probability, Statistics, ML, NLP and MLOps
+# jupyter notebooks
+jupyter
+
+# main packages
+numpy
+pandas
+scipy
+matplotlib
+seaborn
+scikit-learn
+xgboost
+optuna
+shap
+nltk
+
+# add-ons
+openpyxl
+ffmpeg
+ipympl
+celluloid
+wordcloud
+
+# mlops
+flask
+waitress
+fastapi
+uvicorn
+mlflow
+
+# formatting, type hinting, linting and testing (useful for all projects)
+black
+mypy
+ruff
+pytest
