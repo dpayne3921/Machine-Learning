@@ -5,7 +5,7 @@ simple linear regression on GDP vs Happniess datadset
 
 """
 
-__date__ = "2022-05-24"
+__date__ = "01-05-24"
 __author__ = "WaveyDavey"
 
 
@@ -27,7 +27,7 @@ rng = np.random.RandomState(123)
 # %% --------------------------------------------------------------------------
 # load data
 # -----------------------------------------------------------------------------
-file_path = r'../data/gdp-vs-happiness.csv'
+file_path = r'..\..\data\gdp-vs-happiness.csv'
 df = pd.read_csv(file_path)
 
 # %% --------------------------------------------------------------------------
