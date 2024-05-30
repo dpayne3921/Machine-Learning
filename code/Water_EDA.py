@@ -5,19 +5,25 @@ import folium
 from folium import LayerControl
 from IPython.display import display, HTML
 
-
-
 # %%
 # Define the paths to the GML files
 data_paths = {
     "Catchment Stakeholder Group": "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/CatchmentStakeholderGroup.gml",
     "Local Management Area": "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/LocalManagementArea.gml",
     "River Segment": "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/RiverSegment.gml",
-    "Transitional Water Bodies - 1st Cycle": "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/TransitionalWaterBodies-1st-cycle.gml"
+    "Transitional Water Bodies - 1st Cycle": "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/TransitionalWaterBodies-1st-cycle.gml",
+    "Lake Water Bodies": "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/Lake_Water_Bodies_2016.shp",
+    "Surface Drinking Water Protected Areas": "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/Surface_Drinking_Water_Protected_Areas_2016.shp"
 }
+
+# Define the path to the GeoJSON file
+geojson_path = "C:/Users/Dpayn/MLE/Machine-Learning/Large_data/Register_of_Private_Water_Supplies_in_Northern_Ireland_(24_04_2020).geojson"
 
 # Load the files into GeoDataFrames
 gdfs = {name: gpd.read_file(path) for name, path in data_paths.items()}
+
+# Load the GeoJSON file into a GeoDataFrame
+water_supply_gdf = gpd.read_file(geojson_path)
 
 # Inspect each GeoDataFrame
 for name, gdf in gdfs.items():
@@ -26,17 +32,25 @@ for name, gdf in gdfs.items():
     print(gdf.head())
     print("\n")
 
+print("--- Register of Private Water Supplies ---")
+print(water_supply_gdf.info())
+print(water_supply_gdf.head())
+print("\n")
 
-# %%
+# %% ----------------------------------------------------------------------------------
 # Function to simplify geometries for better performance
+# --------------------------------------------------------------------------------------
 def simplify_geometries(gdf, tolerance=0.001):
     gdf['geometry'] = gdf['geometry'].simplify(tolerance, preserve_topology=True)
     return gdf
 
 # Simplify GeoDataFrames
 gdfs = {name: simplify_geometries(gdf) for name, gdf in gdfs.items()}
+water_supply_gdf = simplify_geometries(water_supply_gdf)
 
-# %%
+# %% ----------------------------------------------------------------------------------
+# Function to create a style function for GeoJSON layers
+# --------------------------------------------------------------------------------------
 def generic_style_function(color='blue'):
     return lambda feature: {
         'fillColor': color,
@@ -50,7 +64,9 @@ layer_colors = {
     "Catchment Stakeholder Group": 'green',
     "Local Management Area": 'orange',
     "River Segment": 'blue',
-    "Transitional Water Bodies - 1st Cycle": 'red'
+    "Transitional Water Bodies - 1st Cycle": 'red',
+    "Lake Water Bodies": 'purple',
+    "Surface Drinking Water Protected Areas": 'yellow'
 }
 
 # Example specific style function for River Segment based on SEGMENT_TYPE
@@ -65,8 +81,6 @@ def river_segment_style_function(feature):
         None: 'gray'   # Default color for features with None SEGMENT_TYPE
     }
     type_value = feature['properties'].get('SEGMENT_TYPE', None)  # None if type not specified
-    
-    
 
     return {
         'fillColor': type_color_mapping.get(type_value, 'gray'),
@@ -75,14 +89,15 @@ def river_segment_style_function(feature):
         'fillOpacity': 0.5
     }
 
-# %%
-import folium
-from folium import LayerControl
-from IPython.display import display, HTML
+# %% ----------------------------------------------------------------------------------
+# Create a base map
+# --------------------------------------------------------------------------------------
+# Determine the center of the map based on the data
+center_lat = sum([gdf.geometry.to_crs(epsg=4326).centroid.y.mean() for gdf in gdfs.values()]) / len(gdfs)
+center_lon = sum([gdf.geometry.to_crs(epsg=4326).centroid.x.mean() for gdf in gdfs.values()]) / len(gdfs)
 
-# Create a base map
-# Create a base map
-m = folium.Map(location=[51.5, -0.12], zoom_start=10)
+# Create a base map centered around the data
+m = folium.Map(location=[center_lat, center_lon], zoom_start=10)
 
 # Add each GeoDataFrame as a separate layer
 for name, gdf in gdfs.items():
@@ -94,8 +109,16 @@ for name, gdf in gdfs.items():
                 segment_gdf,
                 name=f"River Segment - {segment_type}",
                 style_function=river_segment_style_function,
-                tooltip=folium.GeoJsonTooltip(fields=['SEGMENT_TYPE'])
+                #tooltip=folium.GeoJsonTooltip(fields=['SEGMENT_TYPE'])
             ).add_to(m)
+    elif name == "Catchment Stakeholder Group":
+        # Add Catchment Stakeholder Group layer with tooltip
+        folium.GeoJson(
+            gdf,
+            name=name,
+            style_function=generic_style_function('green'),
+            tooltip=folium.GeoJsonTooltip(fields=['NAME'])
+        ).add_to(m)
     else:
         color = layer_colors.get(name, 'blue')  # Default to blue if color not specified
         folium.GeoJson(
@@ -104,9 +127,17 @@ for name, gdf in gdfs.items():
             style_function=generic_style_function(color)
         ).add_to(m)
 
+# Add the register of private water supplies as a layer
+folium.GeoJson(
+    water_supply_gdf,
+    name="Register of Private Water Supplies",
+    style_function=generic_style_function('black')
+).add_to(m)
+
 # Add layer control to the map
 folium.LayerControl().add_to(m)
 
 # Display the map
 m
+
 # %%
