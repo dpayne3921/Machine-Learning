@@ -127,4 +127,3 @@ fig, ax = plt.subplots()
 ax.scatter(X_test,y_test)
 
 ax.plot(X_test, y_pred,color='k',label='predicted')
-# %%
