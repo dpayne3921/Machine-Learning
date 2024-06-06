@@ -99,7 +99,6 @@ model = Sequential()
 model.add(LSTM(units=50, return_sequences=True, input_shape=(1, X_train.shape[2])))
 model.add(LSTM(units=50))
 model.add(Dense(1))
-
 model.compile(optimizer='adam', loss='mean_squared_error')
 
 # %% --------------------------------------------------------------------------
