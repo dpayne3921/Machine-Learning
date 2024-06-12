@@ -5,7 +5,7 @@ Geometric interpretation of L1 and L2
 """
 
 __date__ = "2022-07-23"
-__author__ = "RamVaradarajan"
+__author__ = "Wavey Davey"
 __version__ = "0.1"
 
 
