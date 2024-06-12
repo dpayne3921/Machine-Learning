@@ -6,7 +6,7 @@ simple linear regression on GDP vs Happniess datadset
 """
 
 __date__ = "2023-06-05"
-__author__ = "RamVaradarajan"
+__author__ = "Wavey Davey"
 
 
 

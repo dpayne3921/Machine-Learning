@@ -9,7 +9,7 @@ bonus.contour plots
 """
 
 __date__ = "2023-06-05"
-__author__ = "RamVaradarajan"
+__author__ = "Wavey Davey"
 
 
 

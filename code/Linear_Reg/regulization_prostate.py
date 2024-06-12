@@ -5,7 +5,7 @@ Prostate Dataset
 """
 
 __date__ = "2022-01-13"
-__author__ = "RamVaradarajan"
+__author__ = "Wavey Davey"
 
 
 # %% --------------------------------------------------------------------------
