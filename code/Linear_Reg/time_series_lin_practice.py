@@ -78,7 +78,7 @@ df_pivoted = df_pivoted.reindex(date_range)
 # Reset the index
 df_pivoted.reset_index(inplace=True)
 df_pivoted.rename(columns={'index': 'date'}, inplace=True)
-
+ 
 # %%
 import matplotlib.pyplot as plt
 
@@ -96,4 +96,5 @@ for i, year in enumerate(range(1980, 2020, 5)):
 
 plt.tight_layout()
 plt.show()
-# %%
+
+## fit a linear regression model to the data#
