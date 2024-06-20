@@ -14,7 +14,8 @@ __version__ = "0.1"
 # -----------------------------------------------------------------------------
 import numpy as np
 import matplotlib.pyplot as plt
-
+from linreg_mods import check_sequential_dates
+from datetime import datetime
 
 # %% --------------------------------------------------------------------------
 # Create function

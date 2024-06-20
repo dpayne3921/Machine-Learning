@@ -17,6 +17,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import mean_squared_error
 
+from linreg_mods import check_sequential_dates, check_missing_values
 # %% --------------------------------------------------------------------------
 # Import data
 # -----------------------------------------------------------------------------
@@ -64,8 +65,7 @@ df_pivoted.reset_index(drop=True, inplace=True)
 # %%
 
 # Create a date range from 1914-05-23 to the latest date in your DataFrame
-date_range = pd.date_range(start='1976-05-23', end=df_pivoted['date'].max())
-
+date_range = pd.date_range(start=df_pivoted['date'].min(), end=df_pivoted['date'].max())
 # Convert the 'date' column to datetime if it's not already
 df_pivoted['date'] = pd.to_datetime(df_pivoted['date'])
 
@@ -86,7 +86,7 @@ import matplotlib.pyplot as plt
 df_filtered = df_pivoted[(df_pivoted['date'].dt.year >= 1980) & (df_pivoted['date'].dt.year <= 2019)]
 
 fig, axs = plt.subplots(8, 1, figsize=(10, 60))
-
+#jkj
 for i, year in enumerate(range(1980, 2020, 5)):
     df_period = df_filtered[(df_filtered['date'].dt.year >= year) & (df_filtered['date'].dt.year < year + 5)]
     axs[i].plot(df_period['date'], df_period[1])
@@ -97,4 +97,21 @@ for i, year in enumerate(range(1980, 2020, 5)):
 plt.tight_layout()
 plt.show()
 
-## fit a linear regression model to the data#
+
+# %% --------------------------------------------------------------------------
+# test data
+# -----------------------------------------------------------------------------
+
+# Extract the date column and convert it to a list
+dates = df_filtered['date'].tolist()
+
+# Call the function to check if dates are sequential
+is_valid, message = check_sequential_dates(dates)
+print(message)
+
+# Assuming df_filtered is your DataFrame and it is already loaded
+
+missing_values = check_missing_values(df_filtered)
+print(missing_values)
+
+# %%
